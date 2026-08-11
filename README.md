@@ -32,15 +32,22 @@ gh repo clone Kabaye/codex-routing-rules "$HOME\codex-routing-rules"
 & "$HOME\codex-routing-rules\scripts\install.ps1"
 ```
 
+If the local PowerShell execution policy blocks the script:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File "$HOME\codex-routing-rules\scripts\install.ps1"
+```
+
 The installer:
 
 - merges the managed routing block into `~/.codex/AGENTS.md`;
+- removes the older managed GPT-5.6 routing block from previous experiments;
 - also updates a non-empty `~/.codex/AGENTS.override.md`, because that file has global precedence;
 - preserves unrelated instructions;
 - creates timestamped backups;
 - sets the top-level Codex default to `gpt-5.6-sol` with `high` effort;
 - removes only a top-level `service_tier = "fast"` override;
-- does not alter profiles, MCP servers, providers, plugins, sandbox rules, or project configuration.
+- does not alter profiles, MCP servers, providers, plugins, sandbox rules, project configuration, or the existing Luna runner.
 
 To install only the rules and leave `config.toml` untouched:
 
@@ -49,6 +56,22 @@ To install only the rules and leave `config.toml` untouched:
 ```
 
 Restart Codex after installation because global `AGENTS.md` guidance is loaded at the start of a run/session.
+
+## Verify the installation
+
+```powershell
+& "$HOME\codex-routing-rules\scripts\status.ps1"
+```
+
+The expected result is:
+
+```text
+Primary model: gpt-5.6-sol
+Reasoning effort: high
+Service tier override: <none>
+AGENTS.md policy installed: True
+Status: OK — Sol High main, Luna Max worker policy installed.
+```
 
 ## Update both PCs
 
@@ -67,6 +90,7 @@ AGENTS.md                 Global Sol/Luna routing policy
 config.toml.example       Minimal Sol High default configuration
 scripts/install.ps1       Safe, idempotent installer
 scripts/update.ps1        Pull and reapply on a PC
+scripts/status.ps1        Verify revision and active global routing
 ```
 
 ## Important operating constraints
