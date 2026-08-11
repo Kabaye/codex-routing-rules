@@ -80,6 +80,7 @@ scripts/update.ps1        Pull and reapply on a PC
 
 ## Official Codex references
 
-- Global instructions: https://learn.chatgpt.com/docs/agent-configuration/agents-md
-- CLI and `codex exec`: https://learn.chatgpt.com/docs/developer-commands?surface=cli
-- Configuration reference: https://learn.chatgpt.com/docs/config-file/config-reference
+- Global instructions: https://developers.openai.com/codex/agent-configuration/agents-md
+- CLI reference: https://developers.openai.com/codex/cli/reference
+- Configuration reference: https://developers.openai.com/codex/config-reference
+- GPT-5.6 model guidance: https://developers.openai.com/api/docs/guides/latest-model
