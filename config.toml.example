@@ -1,0 +1,12 @@
+# Minimal shared defaults.
+# The installer merges only the top-level model settings into the existing
+# ~/.codex/config.toml and preserves unrelated configuration.
+
+model = "gpt-5.6-sol"
+model_reasoning_effort = "high"
+
+# Luna Max is launched through the user's working CLI/thread flow.
+# Do not configure Luna as a native default_subagent_model unless the current
+# Codex runtime explicitly supports it.
+
+# Keep Fast off by not setting service_tier = "fast".
