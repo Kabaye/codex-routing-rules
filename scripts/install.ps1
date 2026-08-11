@@ -11,10 +11,12 @@ $RepoRoot = Split-Path -Parent $PSScriptRoot
 $PolicySource = Join-Path $RepoRoot "AGENTS.md"
 $StartMarker = "<!-- BEGIN SHARED CODEX ROUTING POLICY -->"
 $EndMarker = "<!-- END SHARED CODEX ROUTING POLICY -->"
+$LegacyStartMarker = "<!-- BEGIN GPT-5.6 MODEL ROUTING POLICY -->"
+$LegacyEndMarker = "<!-- END GPT-5.6 MODEL ROUTING POLICY -->"
 $Utf8NoBom = New-Object System.Text.UTF8Encoding -ArgumentList $false
 $Timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
-$Backups = New-Object System.Collections.Generic.List[string]
-$Changed = New-Object System.Collections.Generic.List[string]
+$Backups = New-Object 'System.Collections.Generic.List[string]'
+$Changed = New-Object 'System.Collections.Generic.List[string]'
 
 if ([string]::IsNullOrWhiteSpace($CodexHome)) {
     if (-not [string]::IsNullOrWhiteSpace($env:CODEX_HOME)) {
@@ -80,6 +82,33 @@ function Get-ManagedPolicyBlock {
     return $Text.Substring($Start, $End - $Start).Trim() + [Environment]::NewLine
 }
 
+function Remove-DelimitedBlocks {
+    param(
+        [Parameter(Mandatory = $true)][string]$Text,
+        [Parameter(Mandatory = $true)][string]$BeginMarker,
+        [Parameter(Mandatory = $true)][string]$FinishMarker,
+        [Parameter(Mandatory = $true)][string]$SourceName
+    )
+
+    $Result = $Text
+
+    while ($true) {
+        $Begin = $Result.IndexOf($BeginMarker, [System.StringComparison]::Ordinal)
+        $Finish = $Result.IndexOf($FinishMarker, [System.StringComparison]::Ordinal)
+
+        if ($Begin -lt 0 -and $Finish -lt 0) {
+            return $Result
+        }
+
+        if ($Begin -lt 0 -or $Finish -lt $Begin) {
+            throw "Unbalanced routing-policy markers in $SourceName"
+        }
+
+        $Finish += $FinishMarker.Length
+        $Result = $Result.Remove($Begin, $Finish - $Begin)
+    }
+}
+
 function Merge-ManagedPolicy {
     param(
         [Parameter(Mandatory = $true)][string]$TargetPath,
@@ -94,22 +123,35 @@ function Merge-ManagedPolicy {
         ""
     }
 
-    $Start = $Original.IndexOf($StartMarker, [System.StringComparison]::Ordinal)
-    $End = $Original.IndexOf($EndMarker, [System.StringComparison]::Ordinal)
+    $Working = Remove-DelimitedBlocks `
+        -Text $Original `
+        -BeginMarker $LegacyStartMarker `
+        -FinishMarker $LegacyEndMarker `
+        -SourceName $TargetPath
+
+    $Start = $Working.IndexOf($StartMarker, [System.StringComparison]::Ordinal)
+    $End = $Working.IndexOf($EndMarker, [System.StringComparison]::Ordinal)
 
     if ($Start -ge 0 -and $End -ge $Start) {
+        $SecondStart = $Working.IndexOf($StartMarker, $Start + $StartMarker.Length, [System.StringComparison]::Ordinal)
+        if ($SecondStart -ge 0) {
+            throw "Multiple shared routing-policy blocks exist in $TargetPath"
+        }
+
         $End += $EndMarker.Length
-        $Updated = $Original.Substring(0, $Start) + $Block.TrimEnd() + $Original.Substring($End)
+        $Updated = $Working.Substring(0, $Start) + $Block.TrimEnd() + $Working.Substring($End)
     }
     elseif ($Start -ge 0 -or $End -ge 0) {
-        throw "Only one routing-policy marker exists in $TargetPath; repair it manually before installing."
+        throw "Only one shared routing-policy marker exists in $TargetPath; repair it manually before installing."
     }
-    elseif ([string]::IsNullOrWhiteSpace($Original)) {
+    elseif ([string]::IsNullOrWhiteSpace($Working)) {
         $Updated = $Block
     }
     else {
-        $Updated = $Original.TrimEnd() + [Environment]::NewLine + [Environment]::NewLine + $Block
+        $Updated = $Working.TrimEnd() + [Environment]::NewLine + [Environment]::NewLine + $Block
     }
+
+    $Updated = $Updated.TrimEnd() + [Environment]::NewLine
 
     if ($Updated -ne $Original) {
         if ($OriginalExists) {
@@ -124,7 +166,7 @@ function Find-FirstTomlTableIndex {
     param([string[]]$Lines)
 
     for ($Index = 0; $Index -lt $Lines.Count; $Index++) {
-        if ($Lines[$Index] -match '^\s*\[[^\]]+\]\s*(?:#.*)?$') {
+        if ($Lines[$Index] -match '^\s*\[\[?.+\]\]?\s*(?:#.*)?$') {
             return $Index
         }
     }
@@ -139,7 +181,7 @@ function Set-TopLevelTomlString {
         [Parameter(Mandatory = $true)][string]$Value
     )
 
-    $FirstTable = Find-FirstTomlTableIndex -Lines $Lines.ToArray()
+    $FirstTable = Find-FirstTomlTableIndex -Lines ($Lines.ToArray())
     $Pattern = '^\s*' + [regex]::Escape($Key) + '\s*='
 
     for ($Index = 0; $Index -lt $FirstTable; $Index++) {
@@ -155,7 +197,7 @@ function Set-TopLevelTomlString {
 function Remove-TopLevelFastTier {
     param([Parameter(Mandatory = $true)][System.Collections.Generic.List[string]]$Lines)
 
-    $FirstTable = Find-FirstTomlTableIndex -Lines $Lines.ToArray()
+    $FirstTable = Find-FirstTomlTableIndex -Lines ($Lines.ToArray())
     for ($Index = $FirstTable - 1; $Index -ge 0; $Index--) {
         if ($Lines[$Index] -match '^\s*service_tier\s*=\s*["'']fast["'']\s*(?:#.*)?$') {
             $Lines.RemoveAt($Index)
@@ -167,21 +209,27 @@ function Test-TomlFile {
     param([Parameter(Mandatory = $true)][string]$Path)
 
     $ValidationCode = "import sys; import tomllib; tomllib.load(open(sys.argv[1], 'rb'))"
+    $Candidates = @(
+        @{ Command = "python"; Prefix = @() },
+        @{ Command = "py"; Prefix = @("-3") }
+    )
+    $FoundInterpreter = $false
 
-    if (Get-Command python -ErrorAction SilentlyContinue) {
-        & python -c $ValidationCode $Path
-        if ($LASTEXITCODE -ne 0) {
-            throw "TOML validation failed: $Path"
+    foreach ($Candidate in $Candidates) {
+        if (-not (Get-Command $Candidate.Command -ErrorAction SilentlyContinue)) {
+            continue
         }
-        return
+
+        $FoundInterpreter = $true
+        $Arguments = @($Candidate.Prefix) + @("-c", $ValidationCode, $Path)
+        & $Candidate.Command @Arguments
+        if ($LASTEXITCODE -eq 0) {
+            return
+        }
     }
 
-    if (Get-Command py -ErrorAction SilentlyContinue) {
-        & py -3 -c $ValidationCode $Path
-        if ($LASTEXITCODE -ne 0) {
-            throw "TOML validation failed: $Path"
-        }
-        return
+    if ($FoundInterpreter) {
+        throw "TOML validation failed, or no available Python interpreter provides tomllib: $Path"
     }
 
     Write-Warning "Python 3.11+ was not found; config.toml could not be parsed with tomllib."
