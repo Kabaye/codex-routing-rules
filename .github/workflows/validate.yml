@@ -1,0 +1,116 @@
+name: Validate routing rules
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: windows-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Parse PowerShell scripts
+        shell: pwsh
+        run: |
+          $failed = $false
+          Get-ChildItem scripts -Filter *.ps1 | ForEach-Object {
+            $tokens = $null
+            $errors = $null
+            [void][System.Management.Automation.Language.Parser]::ParseFile(
+              $_.FullName,
+              [ref]$tokens,
+              [ref]$errors
+            )
+
+            if ($errors.Count -gt 0) {
+              $failed = $true
+              Write-Error "PowerShell parse errors in $($_.FullName):`n$($errors | Out-String)"
+            }
+          }
+
+          if ($failed) {
+            exit 1
+          }
+
+      - name: Exercise installer and idempotency
+        shell: pwsh
+        run: |
+          $testHome = Join-Path $env:RUNNER_TEMP "codex-routing-test"
+          New-Item -ItemType Directory -Force -Path $testHome | Out-Null
+
+          @'
+          model = "old-model"
+          model_reasoning_effort = "medium"
+          service_tier = "fast"
+
+          [mcp_servers.example]
+          command = "example"
+          '@ | Set-Content -Path (Join-Path $testHome "config.toml") -Encoding utf8
+
+          @'
+          # Existing personal instructions
+
+          Keep this unrelated instruction.
+
+          <!-- BEGIN GPT-5.6 MODEL ROUTING POLICY -->
+          Old experimental policy.
+          <!-- END GPT-5.6 MODEL ROUTING POLICY -->
+          '@ | Set-Content -Path (Join-Path $testHome "AGENTS.md") -Encoding utf8
+
+          & ./scripts/install.ps1 -CodexHome $testHome
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+          $config = Get-Content (Join-Path $testHome "config.toml") -Raw
+          $agents = Get-Content (Join-Path $testHome "AGENTS.md") -Raw
+
+          if ($config -notmatch 'model\s*=\s*"gpt-5\.6-sol"') {
+            throw "Sol model was not installed."
+          }
+          if ($config -notmatch 'model_reasoning_effort\s*=\s*"high"') {
+            throw "High effort was not installed."
+          }
+          if ($config -match 'service_tier\s*=\s*"fast"') {
+            throw "Fast service tier was not removed."
+          }
+          if ($config -notmatch '\[mcp_servers\.example\]') {
+            throw "Unrelated TOML configuration was removed."
+          }
+          if ($agents -notmatch 'Keep this unrelated instruction\.') {
+            throw "Unrelated AGENTS.md content was removed."
+          }
+          if ($agents -match 'Old experimental policy\.') {
+            throw "Legacy routing block was not removed."
+          }
+          if ($agents -notmatch '<!-- BEGIN SHARED CODEX ROUTING POLICY -->') {
+            throw "Shared routing policy was not installed."
+          }
+
+          $firstConfig = Get-Content (Join-Path $testHome "config.toml") -Raw
+          $firstAgents = Get-Content (Join-Path $testHome "AGENTS.md") -Raw
+
+          & ./scripts/install.ps1 -CodexHome $testHome
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+          $secondConfig = Get-Content (Join-Path $testHome "config.toml") -Raw
+          $secondAgents = Get-Content (Join-Path $testHome "AGENTS.md") -Raw
+
+          if ($firstConfig -ne $secondConfig) {
+            throw "config.toml installation is not idempotent."
+          }
+          if ($firstAgents -ne $secondAgents) {
+            throw "AGENTS.md installation is not idempotent."
+          }
+
+          & ./scripts/status.ps1 -CodexHome $testHome
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
