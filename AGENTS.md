@@ -6,6 +6,7 @@
 - Sol may keep very small changes when delegation would cost more than the work.
 - Give Luna a self-contained goal, scope, constraints, acceptance criteria, and validation commands.
 - Luna returns only a concise summary: changed files, diff summary, checks, commit SHA, risks, and decisions required. Keep full transcripts and large logs outside Sol context.
+- Do not keep Sol active by polling Luna logs every few seconds. Polling and waiting must run inside the Luna CLI session or a local wrapper; wake Sol only for `DECISION REQUIRED`, `COMPLETED`, `FAILED`, or `TIMEOUT`. Keep routine heartbeats and live logs outside Sol context.
 - When architecture, ambiguity, concurrency, transactions, consistency, security, data-loss risk, or backward compatibility require judgment, Luna returns `DECISION REQUIRED` and Sol decides.
 - Use one Luna worker by default; at most two for independent tasks. Parallel writers need separate worktrees and non-overlapping files. No nested delegation by default.
 - Use a fresh Luna CLI session for an authorized deploy and rollout monitoring.
