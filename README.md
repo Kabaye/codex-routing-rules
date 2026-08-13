@@ -1,14 +1,14 @@
 # Codex routing rules
 
-A small shared rule for both PCs. The actual policy is in [`AGENTS.md`](AGENTS.md).
+Small shared source of truth for both PCs:
 
-The intended setup is deliberately simple:
+- [`AGENTS.md`](AGENTS.md) — the short Sol High / Luna Max routing and delegation policy.
+- [`codex-luna-subagent.ps1`](codex-luna-subagent.ps1) — the shared Luna CLI wrapper.
 
-```text
-Sol High  -> main agent, reasoning, decomposition, review
-Luna Max  -> implementation, tests, build/deploy/monitoring loops
+Copy the policy into the global Codex `AGENTS.md` you already use, and copy the wrapper to:
+
+```powershell
+$HOME\.codex\bin\codex-luna-subagent.ps1
 ```
 
-Use the repository as the source of truth. On each PC, pull the latest version and copy or link the short `AGENTS.md` policy into the global Codex instructions you already use.
-
-There are no installers, update scripts, generated configs, or automatic model-catalog changes in this repository.
+The wrapper keeps Luna non-native (`codex exec`, `agents.enabled=false`). `-Background` returns a `WaitCommand`; the parent should execute that blocking wait once instead of repeatedly polling `console.log`. Normal results come from `last-message.md`; `console.log` is only for failure/debugging.
