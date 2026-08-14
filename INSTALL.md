@@ -24,13 +24,46 @@ Run in PowerShell:
 
 ```powershell
 $catalog = (codex debug models | Out-String) | ConvertFrom-Json
-$catalog.models = @($catalog.models | Where-Object { $_.slug -in @("gpt-5.6-sol", "gpt-5.6-luna") })
+
+$sol = $catalog.models | Where-Object { $_.slug -eq "gpt-5.6-sol" }
+$luna = $catalog.models | Where-Object { $_.slug -eq "gpt-5.6-luna" }
+
+if (-not $sol) { throw "gpt-5.6-sol not found in current Codex model catalog" }
+if (-not $luna) { throw "gpt-5.6-luna not found in current Codex model catalog" }
+
+# Keep only the efforts used by this routing setup.
+$sol.default_reasoning_level = "high"
+$sol.supported_reasoning_levels = @(
+    $sol.supported_reasoning_levels |
+    Where-Object { $_.effort -in @("high", "xhigh") }
+)
+
+$luna.default_reasoning_level = "max"
+$luna.supported_reasoning_levels = @(
+    $luna.supported_reasoning_levels |
+    Where-Object { $_.effort -eq "max" }
+)
+
+if (-not ($sol.supported_reasoning_levels | Where-Object { $_.effort -eq "high" })) {
+    throw "Sol high effort is not advertised by this Codex version"
+}
+if (-not ($luna.supported_reasoning_levels | Where-Object { $_.effort -eq "max" })) {
+    throw "Luna max effort is not advertised by this Codex version"
+}
+
+$catalog.models = @($sol, $luna)
+
 $json = $catalog | ConvertTo-Json -Depth 100
 $utf8 = New-Object System.Text.UTF8Encoding($false)
 [System.IO.File]::WriteAllText("$HOME\.codex\models.json", $json, $utf8)
 ```
 
-The resulting `~/.codex/models.json` should contain exactly Sol and Luna while preserving **all schema fields emitted by the current CLI**.
+The resulting `~/.codex/models.json` preserves **all schema fields emitted by the current CLI**, but exposes only:
+
+```text
+Sol  -> High (default), xhigh (manual escalation)
+Luna -> Max only
+```
 
 ## 3. Update config.toml
 
@@ -66,14 +99,22 @@ Fully close and reopen Codex so it reloads `config.toml`, the generated model ca
 
 ## Optional quick check
 
-Check the generated catalog:
+Check the generated catalog and efforts:
 
 ```powershell
 (Get-Content "$HOME\.codex\models.json" -Raw | ConvertFrom-Json).models |
-  Select-Object slug, multi_agent_version, supports_parallel_tool_calls
+    Select-Object slug, default_reasoning_level, multi_agent_version, supports_parallel_tool_calls,
+        @{Name="efforts";Expression={($_.supported_reasoning_levels.effort -join ",")}}
 ```
 
-Both models should be present; Luna should be `v2`, and `supports_parallel_tool_calls` should be present rather than missing.
+Expected shape:
+
+```text
+gpt-5.6-sol   high   ...   high,xhigh
+gpt-5.6-luna  max    v2    max
+```
+
+`supports_parallel_tool_calls` must be present for both entries.
 
 Then start a Sol High session and ask it to spawn one native Luna Max subagent that replies only with `LUNA_NATIVE_OK`.
 
