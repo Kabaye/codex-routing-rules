@@ -31,11 +31,11 @@ $luna = $catalog.models | Where-Object { $_.slug -eq "gpt-5.6-luna" }
 if (-not $sol) { throw "gpt-5.6-sol not found in current Codex model catalog" }
 if (-not $luna) { throw "gpt-5.6-luna not found in current Codex model catalog" }
 
-# Keep exactly the two model/effort combinations used by this setup.
+# Keep exactly the model/effort combinations used by this setup.
 $sol.default_reasoning_level = "high"
 $sol.supported_reasoning_levels = @(
     $sol.supported_reasoning_levels |
-    Where-Object { $_.effort -eq "high" }
+    Where-Object { $_.effort -in @("high", "xhigh") }
 )
 
 $luna.default_reasoning_level = "max"
@@ -44,8 +44,11 @@ $luna.supported_reasoning_levels = @(
     Where-Object { $_.effort -eq "max" }
 )
 
-if ($sol.supported_reasoning_levels.Count -ne 1) {
-    throw "Sol high effort is not advertised exactly once by this Codex version"
+if (-not ($sol.supported_reasoning_levels | Where-Object { $_.effort -eq "high" })) {
+    throw "Sol high effort is not advertised by this Codex version"
+}
+if (-not ($sol.supported_reasoning_levels | Where-Object { $_.effort -eq "xhigh" })) {
+    throw "Sol xhigh effort is not advertised by this Codex version"
 }
 if ($luna.supported_reasoning_levels.Count -ne 1) {
     throw "Luna max effort is not advertised exactly once by this Codex version"
@@ -61,7 +64,7 @@ $utf8 = New-Object System.Text.UTF8Encoding($false)
 The resulting `~/.codex/models.json` preserves all other schema fields emitted by the current CLI, but exposes only:
 
 ```text
-Sol  -> High only
+Sol  -> High (default), xhigh (manual)
 Luna -> Max only
 ```
 
@@ -108,7 +111,7 @@ Check the generated catalog and efforts:
 Expected shape:
 
 ```text
-gpt-5.6-sol   high   v2   True   high
+gpt-5.6-sol   high   v2   True   high,xhigh
 gpt-5.6-luna  max    v2   True   max
 ```
 
@@ -117,6 +120,7 @@ Then start a Sol High session and ask it to spawn one native Luna Max subagent t
 Expected routing:
 
 ```text
-Sol High -> main/orchestrator
-Luna Max -> native delegated workers
+Sol High  -> main/orchestrator
+Sol xhigh -> manual escalation only
+Luna Max  -> native delegated workers
 ```
