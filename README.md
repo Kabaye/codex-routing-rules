@@ -1,17 +1,20 @@
 # Codex routing rules
 
-Small shared source of truth for both PCs.
+Shared minimal setup for both PCs.
 
-- [`AGENTS.md`](AGENTS.md) — Sol High as the main/orchestrator and native Luna Max subagents for delegated execution.
-- `models.json` — shared filtered Codex model catalog snapshot when present.
+Files:
 
-Current routing:
+- [`agents-subset.md`](agents-subset.md) — copy this section into your global `~/.codex/AGENTS.md`.
+- [`models.json`](models.json) — shared filtered Sol/Luna model catalog.
+- [`INSTALL.md`](INSTALL.md) — short manual setup instructions.
+
+Routing:
 
 ```text
-Sol High  -> main agent, reasoning, decomposition, coordination, review
-Luna Max  -> native subagents for implementation, tests, build/deploy/monitoring and other tool-heavy work
+Sol High -> main agent, reasoning, decomposition, coordination, review
+Luna Max -> native subagents for exploration, implementation, tests, verification, deploy/monitoring
 ```
 
-Native Luna is now preferred. The old CLI Luna wrapper has been removed.
+Important lifecycle rule: reuse a Luna only while it stays in the same role/phase and working scope. When the phase changes (for example exploration -> implementation -> verification -> deploy), prefer a fresh Luna with a concise handoff.
 
-Use the repository as the source of truth for the short routing policy on both PCs. Sol xhigh remains manual-only; Terra, GPT-5.5, Sol Max, Fast, and Ultra are not selected automatically by the policy.
+Sol xhigh is manual-only. Terra, GPT-5.5, Sol Max, Fast, and Ultra are not selected automatically by this policy.
