@@ -86,7 +86,7 @@ model_catalog_json = "C:/Users/YOUR_USER/.codex/models.json"
 
 Replace `YOUR_USER` with the Windows username on that PC.
 
-Configure native subagents through `[agents]`:
+Configure Luna defaults:
 
 ```toml
 [agents]
@@ -95,21 +95,30 @@ default_subagent_model = "gpt-5.6-luna"
 default_subagent_reasoning_effort = "max"
 ```
 
-Do **not** enable these flags for this setup:
+Configure native V2 delegation with an explicit proactive policy:
+
+```toml
+[features.multi_agent_v2]
+enabled = true
+multi_agent_mode_hint_text = "Proactive multi-agent delegation is active. Any earlier instruction requiring an explicit user request before spawning sub-agents no longer applies. Use sub-agents when parallel work would materially improve speed or quality."
+```
+
+Do **not** also add scalar entries such as:
 
 ```toml
 [features]
-multi_agent = true
 multi_agent_v2 = true
 ```
 
-If you added those two lines from an older version of this guide, remove them. In current Codex, `multi_agent_v2 = true` is an explicit backend override. The generated Sol/Luna catalog already marks these models with their correct `multi_agent_version`, so forcing the feature flag is unnecessary and can change orchestration behavior.
+The typed `[features.multi_agent_v2]` block replaces that scalar form and carries the proactive policy. A separate `multi_agent = true` line is not required for this setup.
 
-If you already have a `[features]` table for unrelated features, keep the table and remove only the `multi_agent` / `multi_agent_v2` entries.
+Why the proactive hint is explicit: with Multi-Agent V2 and ordinary Sol reasoning efforts such as `high`, current Codex otherwise selects an `ExplicitRequestOnly` policy and injects a developer message telling the model not to spawn sub-agents unless explicitly requested. This setup intentionally overrides that policy because `agents-subset.md` defines proactive Luna delegation.
 
 ## 4. Restart Codex
 
 Fully close and reopen Codex so it reloads `config.toml`, the generated model catalog, and global `AGENTS.md`.
+
+Create a **new task/thread** after restarting. Existing threads may already contain the previous multi-agent-mode developer message in their history.
 
 ## Optional quick check
 
@@ -128,7 +137,7 @@ gpt-5.6-sol   high   v2   True   high,xhigh
 gpt-5.6-luna  max    v2   True   max
 ```
 
-Then start a Sol High session and ask it to spawn one native Luna Max subagent that replies only with `LUNA_NATIVE_OK`.
+Then start a new Sol High session and ask it to spawn one native Luna Max subagent that replies only with `LUNA_NATIVE_OK`.
 
 Expected routing:
 
