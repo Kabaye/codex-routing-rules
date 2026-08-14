@@ -26,6 +26,5 @@
 ### Model limits
 
 - Sol may keep very small changes when delegation overhead would exceed the work.
-- **Sol xhigh** is manual emergency escalation only.
-- Do not automatically use Sol Max, Terra, GPT-5.5, Fast, or Ultra.
+- This routing setup uses exactly **Sol High** and **Luna Max**. Do not select Sol xhigh/max, Terra, GPT-5.5, Fast, or Ultra.
 - Production writes, pushes, migrations, and deploys require explicit authorization or an existing repository runbook.
