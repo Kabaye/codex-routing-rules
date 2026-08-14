@@ -26,5 +26,8 @@
 ### Model limits
 
 - Sol may keep very small changes when delegation overhead would exceed the work.
-- This routing setup uses exactly **Sol High** and **Luna Max**. Do not select Sol xhigh/max, Terra, GPT-5.5, Fast, or Ultra.
+- **Sol High** is the normal parent/orchestrator effort.
+- **Sol xhigh** is available for manual escalation when High is insufficient; do not select it automatically.
+- **Luna Max** is the only Luna effort used by this routing setup.
+- Do not automatically use Sol Max, Terra, GPT-5.5, Fast, or Ultra.
 - Production writes, pushes, migrations, and deploys require explicit authorization or an existing repository runbook.
