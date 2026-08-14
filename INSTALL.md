@@ -86,13 +86,26 @@ model_catalog_json = "C:/Users/YOUR_USER/.codex/models.json"
 
 Replace `YOUR_USER` with the Windows username on that PC.
 
-If `[features]` already exists, merge these keys into that table instead of creating a second `[features]` table:
+Configure native subagents through `[agents]`:
+
+```toml
+[agents]
+enabled = true
+default_subagent_model = "gpt-5.6-luna"
+default_subagent_reasoning_effort = "max"
+```
+
+Do **not** enable these flags for this setup:
 
 ```toml
 [features]
 multi_agent = true
 multi_agent_v2 = true
 ```
+
+If you added those two lines from an older version of this guide, remove them. In current Codex, `multi_agent_v2 = true` is an explicit backend override. The generated Sol/Luna catalog already marks these models with their correct `multi_agent_version`, so forcing the feature flag is unnecessary and can change orchestration behavior.
+
+If you already have a `[features]` table for unrelated features, keep the table and remove only the `multi_agent` / `multi_agent_v2` entries.
 
 ## 4. Restart Codex
 
