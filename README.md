@@ -4,9 +4,8 @@ Shared minimal setup for both PCs.
 
 Files:
 
-- [`agents-subset.md`](agents-subset.md) — copy this section into your global `~/.codex/AGENTS.md`.
-- [`models.json`](models.json) — shared filtered Sol/Luna model catalog.
-- [`INSTALL.md`](INSTALL.md) — short manual setup instructions.
+- [`agents-subset.md`](agents-subset.md) — copy/merge this section into your global `~/.codex/AGENTS.md`.
+- [`INSTALL.md`](INSTALL.md) — short setup instructions, including generation of a local Sol/Luna model catalog from the Codex CLI installed on that PC.
 
 Routing:
 
@@ -14,6 +13,8 @@ Routing:
 Sol High -> main agent, reasoning, decomposition, coordination, review
 Luna Max -> native subagents for exploration, implementation, tests, verification, deploy/monitoring
 ```
+
+The model catalog is **generated locally from `codex debug models`**, then filtered to Sol + Luna. A frozen `models.json` is intentionally not stored here because the Codex catalog schema can change between CLI versions.
 
 Important lifecycle rule: reuse a Luna only while it stays in the same role/phase and working scope. When the phase changes (for example exploration -> implementation -> verification -> deploy), prefer a fresh Luna with a concise handoff.
 
