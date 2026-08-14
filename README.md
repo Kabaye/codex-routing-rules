@@ -1,14 +1,17 @@
 # Codex routing rules
 
-Small shared source of truth for both PCs:
+Small shared source of truth for both PCs.
 
-- [`AGENTS.md`](AGENTS.md) — the short Sol High / Luna Max routing and delegation policy.
-- [`codex-luna-subagent.ps1`](codex-luna-subagent.ps1) — the shared Luna CLI wrapper.
+- [`AGENTS.md`](AGENTS.md) — Sol High as the main/orchestrator and native Luna Max subagents for delegated execution.
+- `models.json` — shared filtered Codex model catalog snapshot when present.
 
-Copy the policy into the global Codex `AGENTS.md` you already use, and copy the wrapper to:
+Current routing:
 
-```powershell
-$HOME\.codex\bin\codex-luna-subagent.ps1
+```text
+Sol High  -> main agent, reasoning, decomposition, coordination, review
+Luna Max  -> native subagents for implementation, tests, build/deploy/monitoring and other tool-heavy work
 ```
 
-The wrapper keeps Luna non-native (`codex exec`, `agents.enabled=false`). `-Background` returns a `WaitCommand`; the parent should execute that blocking wait once instead of repeatedly polling `console.log`. Normal results come from `last-message.md`; `console.log` is only for failure/debugging.
+Native Luna is now preferred. The old CLI Luna wrapper has been removed.
+
+Use the repository as the source of truth for the short routing policy on both PCs. Sol xhigh remains manual-only; Terra, GPT-5.5, Sol Max, Fast, and Ultra are not selected automatically by the policy.
