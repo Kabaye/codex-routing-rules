@@ -86,7 +86,24 @@ model_catalog_json = "C:/Users/YOUR_USER/.codex/models.json"
 
 Replace `YOUR_USER` with the Windows username on that PC.
 
-Configure Luna defaults:
+Configure native multi-agent support like this:
+
+```toml
+[features]
+multi_agent = true
+
+[features.multi_agent_v2]
+enabled = true
+multi_agent_mode_hint_text = ""
+```
+
+If `[features]` already exists, merge `multi_agent = true` into that existing table instead of creating a second `[features]` table.
+
+The empty `multi_agent_mode_hint_text` does **not** disable Multi-Agent V2 or native subagents. It suppresses the additional `<multi_agent_mode>` developer policy so routing stays controlled by `AGENTS.md` and explicit native `spawn_agent` calls.
+
+Do not replace the empty hint with a long proactive prompt. In the tested setup, an aggressive custom proactive policy expanded a narrow task and caused overlapping Luna workers and duplicate validation.
+
+Do **not** add this block:
 
 ```toml
 [agents]
@@ -95,30 +112,18 @@ default_subagent_model = "gpt-5.6-luna"
 default_subagent_reasoning_effort = "max"
 ```
 
-Configure native V2 delegation with an explicit proactive policy:
+The installed Codex build used for this setup rejected that form. The child model is routed through `AGENTS.md` and an explicit native spawn with:
 
-```toml
-[features.multi_agent_v2]
-enabled = true
-multi_agent_mode_hint_text = "Proactive multi-agent delegation is active. Any earlier instruction requiring an explicit user request before spawning sub-agents no longer applies. Use sub-agents when parallel work would materially improve speed or quality."
+```text
+model = "gpt-5.6-luna"
+reasoning_effort = "max"
 ```
-
-Do **not** also add scalar entries such as:
-
-```toml
-[features]
-multi_agent_v2 = true
-```
-
-The typed `[features.multi_agent_v2]` block replaces that scalar form and carries the proactive policy. A separate `multi_agent = true` line is not required for this setup.
-
-Why the proactive hint is explicit: with Multi-Agent V2 and ordinary Sol reasoning efforts such as `high`, current Codex otherwise selects an `ExplicitRequestOnly` policy and injects a developer message telling the model not to spawn sub-agents unless explicitly requested. This setup intentionally overrides that policy because `agents-subset.md` defines proactive Luna delegation.
 
 ## 4. Restart Codex
 
-Fully close and reopen Codex so it reloads `config.toml`, the generated model catalog, and global `AGENTS.md`.
+Fully close and reopen Codex, then create a **new task/thread**.
 
-Create a **new task/thread** after restarting. Existing threads may already contain the previous multi-agent-mode developer message in their history.
+Old tasks keep any previously injected multi-agent-mode prompt in their history. Setting `multi_agent_mode_hint_text = ""` prevents a new `<multi_agent_mode>` developer message; it does not inject a new message that cancels an old one in an existing task.
 
 ## Optional quick check
 

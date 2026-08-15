@@ -15,7 +15,7 @@
 
 ### Parallelism and coordination
 
-- Use as many Luna agents as are genuinely useful; there is no arbitrary fixed maximum. Parallelize only genuinely independent work and avoid duplicate repository exploration or validation.
+- Use one Luna for one bounded objective. Add more only for genuinely independent work, and avoid duplicate exploration or validation.
 - Read-only agents may share a checkout. Parallel writers should normally use separate worktrees; sharing one checkout is acceptable only with explicitly disjoint ownership and no collisions through lockfiles, migrations, generated files, shared config, Git operations, or build state.
 - Do not use nested delegation by default. Sol remains responsible for orchestration, integration, conflict prevention, and final validation.
 - Do not keep Sol busy with frequent status polling. Use native `wait_agent`/coordination primitives; resume Sol when a child needs a decision, completes, fails, or times out. Routine heartbeats and large logs stay outside Sol context.
