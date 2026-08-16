@@ -119,6 +119,18 @@ model = "gpt-5.6-luna"
 reasoning_effort = "max"
 ```
 
+If Memories are enabled, route both background memory stages through Luna:
+
+```toml
+[memories]
+extract_model = "gpt-5.6-luna"
+consolidation_model = "gpt-5.6-luna"
+```
+
+For Codex CLI 0.147.0, memory extraction already defaults to `gpt-5.6-luna`, while memory consolidation defaults to `gpt-5.6-terra`. The `extract_model` line makes the existing default explicit; the `consolidation_model` line is the actual override that moves background consolidation from Terra to Luna.
+
+This does **not** disable Memories and does not guarantee a specific usage reduction. It only changes the model used for those background memory stages. If `[memories]` already exists, merge these two keys into the existing table.
+
 ## 4. Restart Codex
 
 Fully close and reopen Codex, then create a **new task/thread**.
