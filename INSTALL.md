@@ -30,12 +30,14 @@ $sol = $catalog.models | Where-Object { $_.slug -eq "gpt-5.6-sol" }
 $luna = $catalog.models | Where-Object { $_.slug -eq "gpt-5.6-luna" }
 
 $sol.default_reasoning_level = "high"
+$sol.multi_agent_version = "v2"
 $sol.supported_reasoning_levels = @(
     $sol.supported_reasoning_levels |
     Where-Object { $_.effort -in @("high", "xhigh") }
 )
 
 $luna.default_reasoning_level = "max"
+$luna.multi_agent_version = "v2"
 $luna.supported_reasoning_levels = @(
     $luna.supported_reasoning_levels |
     Where-Object { $_.effort -eq "max" }
