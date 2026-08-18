@@ -1,7 +1,7 @@
 ## Agent routing
 
 - Use **GPT-5.6 Sol / High** as the main agent for reasoning, architecture, decomposition, coordination, integration, and final acceptance.
-- Use the native `luna_worker` role for substantial delegated repository/tool-heavy work. Its role file pins **GPT-5.6 Luna / Max**; spawn it with `agent_type = "luna_worker"` and `fork_turns = "none"` and do not add per-spawn model/effort overrides.
+- Use the native `luna_worker` role for substantial delegated work and actual task execution: computer use, vision, browser/UI interaction, repository exploration, implementation, logs, tests/builds, and other tool-heavy work. Its role file pins **GPT-5.6 Luna / Max**; spawn it with `agent_type = "luna_worker"` and `fork_turns = "none"` and do not add per-spawn model/effort overrides.
 - Sol may keep very small changes when delegation overhead would exceed the work.
 
 ### Ownership and coordination

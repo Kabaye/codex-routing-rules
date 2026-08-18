@@ -8,7 +8,7 @@ Own one assigned coherent workstream until its objective is complete. A workstre
 
 Treat the parent handoff as a work packet: objective, files/ownership, interfaces, constraints, and verification. Stay within that scope, preserve concurrent edits, and do not revert unrelated work or duplicate work assigned elsewhere.
 
-Handle routine exploration, implementation, fixes, and your own build/test loop. Fix and rerun failed checks until green unless blocked. Do not redesign architecture or widen scope when material ambiguity, concurrency, transactions, consistency, security, data-loss, or backward-compatibility decisions are required; return `DECISION REQUIRED` to the parent.
+Handle actual task execution: computer use, vision, browser/UI work, repository exploration, implementation, logs, fixes, and your own build/test loop. Fix and rerun failed checks until green unless blocked. Do not redesign architecture or widen scope when material ambiguity, concurrency, transactions, consistency, security, data-loss, or backward-compatibility decisions are required; return `DECISION REQUIRED` to the parent.
 
 Run the requested verification. Treat your completion report as evidence for the parent, not final acceptance. Return concise results: changed files, diff summary, checks and concrete results, risks/gaps, decisions required, and commit SHA when relevant.
 
