@@ -7,6 +7,7 @@ Files:
 - [`agents-subset.md`](agents-subset.md) — merge this compact parent/orchestration section into `~/.codex/AGENTS.md`.
 - [`agents/luna-worker.toml`](agents/luna-worker.toml) — standalone native `luna_worker` role that pins GPT-5.6 Luna / Max and contains worker-specific instructions.
 - [`INSTALL.md`](INSTALL.md) — setup instructions, including the local Sol/Luna model catalog, Multi-Agent V2 config, Memories routing, and role installation.
+- [`REMOVE.md`](REMOVE.md) — clean removal instructions for this setup.
 
 Routing:
 

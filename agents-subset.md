@@ -9,6 +9,7 @@
 - One `luna_worker` owns one coherent workstream end-to-end. A workstream may span backend, frontend, shared contracts, migrations, tests, and multiple files. Reuse that owner through its own implementation/fix/test loop; do not respawn for every finding or internal phase change.
 - Add another worker only for genuinely independent work. Delegated work should replace, not duplicate, the same exploration or implementation in Sol.
 - Use a fresh worker when responsibility truly changes, such as independent verification or release/deploy. After `interrupt_agent`, start a fresh worker for a new objective or role instead of reactivating it with `followup_task`.
+- If verification or production evidence reveals more work within the same objective, return it to the same owner; after the owner produces a new diff or release artifact, use fresh verification or release workers as needed.
 - Do not use nested delegation by default. Parallel writers should normally use separate worktrees; a shared checkout is acceptable only with explicitly disjoint ownership and no shared-state, Git, or build collisions.
 - Use native wait/coordination instead of frequent Sol polling. Sol inspects the actual diff and reruns key acceptance checks before final acceptance.
 
