@@ -1,11 +1,11 @@
-# Remove
+# Remove x20
 
-## 1. Remove the Luna worker role
+## 1. Remove the Sol worker role
 
 Run in PowerShell:
 
 ```powershell
-Remove-Item "$HOME\.codex\agents\luna-worker.toml" -ErrorAction SilentlyContinue
+Remove-Item "$HOME\.codex\agents\sol-worker.toml" -ErrorAction SilentlyContinue
 ```
 
 ## 2. Remove the routing rules
@@ -30,8 +30,7 @@ Remove these top-level values:
 
 ```toml
 model = "gpt-5.6-sol"
-model_reasoning_effort = "high"
-model_catalog_json = "C:/Users/YOUR_USER/.codex/models.json"
+model_reasoning_effort = "xhigh"
 ```
 
 Remove these setup-specific keys from their existing tables:
@@ -43,22 +42,10 @@ multi_agent = true
 [features.multi_agent_v2]
 enabled = true
 multi_agent_mode_hint_text = ""
-
-[memories]
-extract_model = "gpt-5.6-luna"
-consolidation_model = "gpt-5.6-luna"
 ```
 
 If one of those tables becomes empty, remove its empty table header too.
 
-## 4. Remove models.json
-
-Run in PowerShell:
-
-```powershell
-Remove-Item "$HOME\.codex\models.json" -ErrorAction SilentlyContinue
-```
-
-## 5. Restart Codex
+## 4. Restart Codex
 
 Fully close Codex, reopen it, and start a new task/thread.

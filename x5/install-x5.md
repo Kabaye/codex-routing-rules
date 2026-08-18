@@ -1,4 +1,4 @@
-# Install
+# Install x5
 
 ## 1. Install the Luna worker role
 
@@ -6,7 +6,8 @@ From the repository root, run:
 
 ```powershell
 New-Item -ItemType Directory -Force "$HOME\.codex\agents" | Out-Null
-Copy-Item ".\agents\luna-worker.toml" "$HOME\.codex\agents\luna-worker.toml" -Force
+Remove-Item "$HOME\.codex\agents\sol-worker.toml" -ErrorAction SilentlyContinue
+Copy-Item ".\x5\agents\luna-worker.toml" "$HOME\.codex\agents\luna-worker.toml" -Force
 ```
 
 ## 2. Update AGENTS.md
