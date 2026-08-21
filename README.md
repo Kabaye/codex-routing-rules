@@ -6,7 +6,7 @@ Three installable profiles. Install only one at a time.
 
 `Terra High -> luna_worker (Luna Max)`
 
-Beginner-friendly profile: Terra leads the conversation, explains technical topics in clear Russian, makes decisions, and checks the final result. Luna handles substantial practical/tool-heavy work. The profile uses Codex's default model catalog and does not create a custom `models.json`.
+Beginner-friendly profile: Terra leads the conversation, explains technical topics in clear Russian, makes decisions, and checks the final result. Luna handles substantial practical/tool-heavy work. The profile generates a strict local model catalog that exposes only **Terra High** and **Luna Max**, and limits concurrent subagents to two.
 
 - Install: [`lite/install-lite.md`](lite/install-lite.md)
 - Remove: [`lite/remove-lite.md`](lite/remove-lite.md)

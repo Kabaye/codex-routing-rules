@@ -31,6 +31,7 @@ Remove these top-level values:
 ```toml
 model = "gpt-5.6-terra"
 model_reasoning_effort = "high"
+model_catalog_json = "C:/Users/YOUR_USER/.codex/models.json"
 ```
 
 Remove these setup-specific keys from their existing tables:
@@ -42,6 +43,7 @@ multi_agent = true
 [features.multi_agent_v2]
 enabled = true
 multi_agent_mode_hint_text = ""
+max_concurrent_threads_per_session = 2
 
 [memories]
 extract_model = "gpt-5.6-luna"
@@ -50,6 +52,14 @@ consolidation_model = "gpt-5.6-luna"
 
 If one of those tables becomes empty, remove its empty table header too.
 
-## 4. Restart Codex
+## 4. Remove models.json
+
+Run in PowerShell:
+
+```powershell
+Remove-Item "$HOME\.codex\models.json" -ErrorAction SilentlyContinue
+```
+
+## 5. Restart Codex
 
 Fully close Codex, reopen it, and start a new task/thread.
