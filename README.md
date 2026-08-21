@@ -4,9 +4,9 @@ Three installable profiles. Install only one at a time.
 
 ## lite
 
-`Terra High -> luna_worker (Luna Max)`
+`Luna Max -> luna_worker (Luna Max)`
 
-Beginner-friendly profile: Terra leads the conversation, explains technical topics in clear Russian, makes decisions, and checks the final result. Luna handles substantial practical/tool-heavy work. The profile generates a strict local model catalog that exposes only **Terra High** and **Luna Max**, and limits concurrent subagents to two.
+Beginner-friendly profile: Luna Max is the only available model, leads the conversation in clear Russian, handles the actual work, and may run at most one Luna Max subagent when that genuinely helps. The profile generates a strict local model catalog that exposes only **Luna Max**.
 
 - Install: [`lite/install-lite.md`](lite/install-lite.md)
 - Remove: [`lite/remove-lite.md`](lite/remove-lite.md)

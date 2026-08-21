@@ -26,18 +26,7 @@ Temporarily comment out the existing `model_catalog_json` line in `~/.codex/conf
 
 ```powershell
 $catalog = (codex debug models | Out-String) | ConvertFrom-Json
-
-$terra = $catalog.models | Where-Object { $_.slug -eq "gpt-5.6-terra" }
 $luna = $catalog.models | Where-Object { $_.slug -eq "gpt-5.6-luna" }
-
-$terra.default_reasoning_level = "high"
-$terra.multi_agent_version = "v2"
-$terra.supported_reasoning_levels = @(
-    [pscustomobject]@{
-        effort = "high"
-        description = "High reasoning effort"
-    }
-)
 
 $luna.default_reasoning_level = "max"
 $luna.multi_agent_version = "v2"
@@ -48,7 +37,7 @@ $luna.supported_reasoning_levels = @(
     }
 )
 
-$catalog.models = @($terra, $luna)
+$catalog.models = @($luna)
 
 $json = $catalog | ConvertTo-Json -Depth 100
 $utf8 = New-Object System.Text.UTF8Encoding($false)
@@ -66,8 +55,8 @@ Open:
 Set the top-level values:
 
 ```toml
-model = "gpt-5.6-terra"
-model_reasoning_effort = "high"
+model = "gpt-5.6-luna"
+model_reasoning_effort = "max"
 model_catalog_json = "C:/Users/YOUR_USER/.codex/models.json"
 ```
 
@@ -82,7 +71,7 @@ multi_agent = true
 [features.multi_agent_v2]
 enabled = true
 multi_agent_mode_hint_text = ""
-max_concurrent_threads_per_session = 2
+max_concurrent_threads_per_session = 1
 
 [memories]
 extract_model = "gpt-5.6-luna"
