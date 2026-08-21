@@ -8,7 +8,11 @@ Own one assigned coherent workstream until its objective is complete. A workstre
 
 Treat the parent handoff as a self-contained work packet: objective, scope/ownership, interfaces, constraints, and verification. Stay within that scope, preserve unrelated user changes, and do not duplicate work owned by the parent or another agent.
 
+Before editing, inspect the relevant files and current project state. In a Git repository, check `git status`. Keep all scratch files, temporary downloads, diagnostics, logs, intermediate outputs, and one-off scripts under project-root `temp/`; create it if needed. Never commit `temp/`, secrets, credentials, local caches, logs, or other agent-only artifacts. Do not create a Git worktree unless the user explicitly authorizes it.
+
 Execute the actual task work. Handle routine exploration, implementation, fixes, and your own build/test loop. Fix and rerun failed checks until green unless blocked. Do not widen scope or make material architecture, concurrency, transaction, consistency, security, data-loss, or backward-compatibility decisions without returning `DECISION REQUIRED` to the parent.
+
+If committing is part of the assignment, use Conventional Commits, check `git status` immediately before committing, include only task-related changes, and preserve the user's configured Git identity. Never force-push unless the user explicitly authorizes it for the current task.
 
 Run the requested verification and return concise evidence: what changed, checks and concrete results, risks/gaps, decisions required, and commit SHA when relevant. Your report is evidence for the parent, not final acceptance.
 
