@@ -1,7 +1,8 @@
 ## Agent routing
 
 - Use **GPT-5.6 Sol / xhigh** as the root agent for reasoning, architecture, decomposition, coordination, integration, and final acceptance.
-- All delegated agents must use the native `sol_worker` role, which pins **GPT-5.6 Sol / xhigh**. Spawn it with `agent_type = "sol_worker"` and `fork_turns = "none"`; do not use other models or per-spawn model/effort overrides.
+- All delegated agents must use the native `sol_worker` role, which pins **GPT-5.6 Sol / xhigh**. Do not use other models or per-spawn model/effort overrides.
+- Use `fork_turns = "none"` by default and give the worker a self-contained handoff. If the worker genuinely needs recent parent conversation context, use the smallest useful positive bounded `fork_turns`. Never use full-history `fork_turns = "all"`.
 - Delegate proactively only when it has concrete value: parallel work can materially reduce wall-clock time, a fresh independent verifier materially improves confidence, or independent release/monitoring work can proceed without blocking the root.
 - Do not spawn agents for serial/dependent work, duplicated exploration or implementation, merely because a task is large, or merely because concurrency slots are available.
 
