@@ -33,15 +33,19 @@ $luna = $catalog.models | Where-Object { $_.slug -eq "gpt-5.6-luna" }
 $terra.default_reasoning_level = "high"
 $terra.multi_agent_version = "v2"
 $terra.supported_reasoning_levels = @(
-    $terra.supported_reasoning_levels |
-    Where-Object { $_.effort -eq "high" }
+    [pscustomobject]@{
+        effort = "high"
+        description = "High reasoning effort"
+    }
 )
 
 $luna.default_reasoning_level = "max"
 $luna.multi_agent_version = "v2"
 $luna.supported_reasoning_levels = @(
-    $luna.supported_reasoning_levels |
-    Where-Object { $_.effort -eq "max" }
+    [pscustomobject]@{
+        effort = "max"
+        description = "Maximum reasoning effort"
+    }
 )
 
 $catalog.models = @($terra, $luna)
