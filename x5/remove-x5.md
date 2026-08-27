@@ -30,7 +30,7 @@ Remove these top-level values:
 
 ```toml
 model = "gpt-5.6-sol"
-model_reasoning_effort = "high"
+model_reasoning_effort = "xhigh"
 model_catalog_json = "C:/Users/YOUR_USER/.codex/models.json"
 ```
 

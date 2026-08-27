@@ -30,7 +30,7 @@ $catalog = (codex debug models | Out-String) | ConvertFrom-Json
 $sol = $catalog.models | Where-Object { $_.slug -eq "gpt-5.6-sol" }
 $luna = $catalog.models | Where-Object { $_.slug -eq "gpt-5.6-luna" }
 
-$sol.default_reasoning_level = "high"
+$sol.default_reasoning_level = "xhigh"
 $sol.multi_agent_version = "v2"
 $sol.supported_reasoning_levels = @(
     [pscustomobject]@{
@@ -71,7 +71,7 @@ Set the top-level values:
 
 ```toml
 model = "gpt-5.6-sol"
-model_reasoning_effort = "high"
+model_reasoning_effort = "xhigh"
 model_catalog_json = "C:/Users/YOUR_USER/.codex/models.json"
 ```
 
@@ -86,21 +86,23 @@ multi_agent = true
 [features.multi_agent_v2]
 enabled = true
 multi_agent_mode_hint_text = ""
-max_concurrent_threads_per_session = 2
+max_concurrent_threads_per_session = 3
 
 [memories]
 extract_model = "gpt-5.6-luna"
 consolidation_model = "gpt-5.6-luna"
 ```
 
+`max_concurrent_threads_per_session = 3` means the root plus at most two concurrently active subagents.
+
 ## 5. Restart Codex
 
 Fully close Codex, reopen it, and start a new task/thread.
 
-The default lane is work scope. To enable the expensive lane for one coherent objective, include this standalone directive in the request:
+By default, all delegated agents are Luna Max. Sol X High subagents are allowed only when the user explicitly instructs the current objective to use Sol X High agents, for example:
 
 ```text
-scope: non-work
+используй агентов Sol X High
 ```
 
-A new unrelated objective returns to the default work scope unless marked again.
+No other condition, label, scope, or inferred need unlocks Sol X High subagents.

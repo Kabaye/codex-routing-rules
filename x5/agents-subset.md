@@ -1,6 +1,6 @@
 ## Agent routing
 
-- Use **GPT-5.6 Sol / High** as the main agent for reasoning, architecture, decomposition, coordination, integration, and final acceptance.
+- Use **GPT-5.6 Sol / xhigh** as the main agent for reasoning, architecture, decomposition, coordination, integration, and final acceptance.
 - Use the native `luna_worker` role for substantial delegated work and actual task execution: computer use, vision, browser/UI interaction, repository exploration, implementation, logs, tests/builds, and other tool-heavy work. Its role file pins **GPT-5.6 Luna / Max**; do not add per-spawn model/effort overrides.
 - Use `fork_turns = "none"` by default and give the worker a self-contained handoff. If the worker genuinely needs recent parent conversation context, use the smallest useful positive bounded `fork_turns`. Never use full-history `fork_turns = "all"`.
 - Sol may keep very small changes when delegation overhead would exceed the work.
@@ -16,6 +16,6 @@
 
 ### Model limits
 
-- **Sol High** is the normal parent/orchestrator effort; **Sol xhigh** is manual escalation only.
+- **Sol xhigh** is the normal parent/orchestrator effort; **Sol High** is a manual downgrade only.
 - **Luna Max** is the only delegated worker model/effort in this setup. Do not automatically use Sol Max, Terra, GPT-5.5, Fast, or Ultra.
 - Production writes, pushes, migrations, and deploys require explicit authorization or an existing repository runbook.

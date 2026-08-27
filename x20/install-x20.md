@@ -46,9 +46,12 @@ multi_agent = true
 [features.multi_agent_v2]
 enabled = true
 multi_agent_mode_hint_text = ""
+max_concurrent_threads_per_session = 3
 ```
 
-Remove `extract_model` and `consolidation_model` from `[memories]` if they were added by the x5 profile.
+`max_concurrent_threads_per_session = 3` means the root plus at most two concurrently active subagents.
+
+Remove `extract_model` and `consolidation_model` from `[memories]` if they were added by another profile.
 
 ## 4. Restart Codex
 

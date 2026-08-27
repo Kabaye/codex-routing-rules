@@ -42,6 +42,7 @@ multi_agent = true
 [features.multi_agent_v2]
 enabled = true
 multi_agent_mode_hint_text = ""
+max_concurrent_threads_per_session = 3
 ```
 
 If one of those tables becomes empty, remove its empty table header too.

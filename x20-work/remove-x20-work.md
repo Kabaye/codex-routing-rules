@@ -31,7 +31,7 @@ Remove these top-level values:
 
 ```toml
 model = "gpt-5.6-sol"
-model_reasoning_effort = "high"
+model_reasoning_effort = "xhigh"
 model_catalog_json = "C:/Users/YOUR_USER/.codex/models.json"
 ```
 
@@ -44,7 +44,7 @@ multi_agent = true
 [features.multi_agent_v2]
 enabled = true
 multi_agent_mode_hint_text = ""
-max_concurrent_threads_per_session = 2
+max_concurrent_threads_per_session = 3
 
 [memories]
 extract_model = "gpt-5.6-luna"

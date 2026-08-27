@@ -30,18 +30,26 @@ $catalog = (codex debug models | Out-String) | ConvertFrom-Json
 $sol = $catalog.models | Where-Object { $_.slug -eq "gpt-5.6-sol" }
 $luna = $catalog.models | Where-Object { $_.slug -eq "gpt-5.6-luna" }
 
-$sol.default_reasoning_level = "high"
+$sol.default_reasoning_level = "xhigh"
 $sol.multi_agent_version = "v2"
 $sol.supported_reasoning_levels = @(
-    $sol.supported_reasoning_levels |
-    Where-Object { $_.effort -in @("high", "xhigh") }
+    [pscustomobject]@{
+        effort = "high"
+        description = "High reasoning effort"
+    },
+    [pscustomobject]@{
+        effort = "xhigh"
+        description = "Extra-high reasoning effort"
+    }
 )
 
 $luna.default_reasoning_level = "max"
 $luna.multi_agent_version = "v2"
 $luna.supported_reasoning_levels = @(
-    $luna.supported_reasoning_levels |
-    Where-Object { $_.effort -eq "max" }
+    [pscustomobject]@{
+        effort = "max"
+        description = "Maximum reasoning effort"
+    }
 )
 
 $catalog.models = @($sol, $luna)
@@ -63,7 +71,7 @@ Set the top-level values:
 
 ```toml
 model = "gpt-5.6-sol"
-model_reasoning_effort = "high"
+model_reasoning_effort = "xhigh"
 model_catalog_json = "C:/Users/YOUR_USER/.codex/models.json"
 ```
 

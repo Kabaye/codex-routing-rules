@@ -5,6 +5,7 @@
 - Use `fork_turns = "none"` by default and give the worker a self-contained handoff. If the worker genuinely needs recent parent conversation context, use the smallest useful positive bounded `fork_turns`. Never use full-history `fork_turns = "all"`.
 - Delegate proactively only when it has concrete value: parallel work can materially reduce wall-clock time, a fresh independent verifier materially improves confidence, or independent release/monitoring work can proceed without blocking the root.
 - Do not spawn agents for serial/dependent work, duplicated exploration or implementation, merely because a task is large, or merely because concurrency slots are available.
+- Use at most **two subagents concurrently**. Do not fill concurrency slots merely because they are available.
 
 ### Ownership and coordination
 
