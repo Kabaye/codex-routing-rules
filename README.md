@@ -24,7 +24,7 @@ Economical delegated-work profile: Sol xhigh remains the root for reasoning, arc
 
 `Sol xhigh root -> Luna Max delegated agents by default`
 
-Work profile with a hard Luna-first rule: every delegated agent is **Luna Max**, regardless of task complexity, verification needs, release responsibility, or available concurrency. Sol xhigh subagents are allowed only when the user explicitly instructs the current objective to use **Sol X High agents** (for example, `используй агентов Sol X High`). No inferred condition or scope label unlocks them. A new unrelated objective returns to Luna-only delegation. The profile allows at most two concurrent subagents and routes Memories through Luna.
+Work profile with a hard Luna-first gate: before explicit user authorization, every delegated agent is **Luna Max**, regardless of task complexity, verification needs, release responsibility, or available concurrency. Sol xhigh subagents become eligible only when the user explicitly instructs the current objective to use **Sol X High agents** (for example, `используй агентов Sol X High`). That instruction unlocks coordinator discretion rather than forcing Sol everywhere: the root may mix Luna Max and Sol xhigh per coherent workstream, keeping operational/tool-heavy work on Luna when appropriate and reserving Sol xhigh for work where stronger reasoning materially helps. A new unrelated objective returns to Luna-only delegation. The profile allows at most two concurrent subagents and routes Memories through Luna.
 
 - Install: [`x20-work/install-x20-work.md`](x20-work/install-x20-work.md)
 - Remove: [`x20-work/remove-x20-work.md`](x20-work/remove-x20-work.md)

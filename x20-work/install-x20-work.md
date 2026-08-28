@@ -99,10 +99,10 @@ consolidation_model = "gpt-5.6-luna"
 
 Fully close Codex, reopen it, and start a new task/thread.
 
-By default, all delegated agents are Luna Max. Sol X High subagents are allowed only when the user explicitly instructs the current objective to use Sol X High agents, for example:
+By default, all delegated agents are Luna Max. Sol X High subagents become available only when the user explicitly instructs the current objective to use Sol X High agents, for example:
 
 ```text
 используй агентов Sol X High
 ```
 
-No other condition, label, scope, or inferred need unlocks Sol X High subagents.
+That instruction unlocks Sol X High; it does not force every subagent to use it. After explicit authorization, the Sol xhigh root decides per coherent workstream whether Luna Max or Sol xhigh is the better fit. Operational/tool-heavy work may stay on Luna, while reasoning-heavy implementation may use Sol xhigh when useful. No other condition, label, scope, or inferred need unlocks Sol X High subagents.
