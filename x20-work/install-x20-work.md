@@ -34,10 +34,6 @@ $sol.default_reasoning_level = "xhigh"
 $sol.multi_agent_version = "v2"
 $sol.supported_reasoning_levels = @(
     [pscustomobject]@{
-        effort = "high"
-        description = "High reasoning effort"
-    },
-    [pscustomobject]@{
         effort = "xhigh"
         description = "Extra-high reasoning effort"
     }
